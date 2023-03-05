@@ -6,14 +6,13 @@
 ---------------------------------------------------------------------------------------
 
 DECLARE @CURRENT_TIME DATETIME = CURRENT_TIMESTAMP
-DECLARE @USER VARCHAR(200) = SELECT USER_NAME();
+DECLARE @USER VARCHAR(200) = (SELECT USER_NAME());
 
 PRINT 'Beginning Deployment of ETL'
 PRINT 'Steps are as follows:'
 PRINT 'Step 1: Create Tables for logging, source information, and imports'
 PRINT 'Step 2: Create Stored Procedures for handling the ETL logic and seeding the data'
 PRINT 'Step 3: Create Views for a cleaned up version of the data'
-
 
 
 CREATE TABLE [dbo].[etl_log] (
@@ -52,25 +51,26 @@ CREATE TABLE [dbo].[SourcesImport] (
 )
 
 CREATE TABLE [dbo].[IMPORTSOURCE_1] (
-
+    [SourceID] [int] NOT NULL
 )
 
 CREATE TABLE [dbo].[IMPORTSOURCE_2] (
-    
+    [SourceID] [int] NOT NULL
 )
 
 CREATE TABLE [dbo].[IMPORTSOURCE_3] (
-    
+    [SourceID] [int] NOT NULL
 )
 
 CREATE TABLE [dbo].[IMPORTSOURCE_4] (
-    
+    [SourceID] [int] NOT NULL
 )
 
 CREATE TABLE [dbo].[IMPORTSOURCE_5] (
-    
+    [SourceID] [int] NOT NULL
 )
 
+GO
 
 CREATE PROCEDURE [dbo].[sp_etl_logging]
     @Message VARCHAR(MAX),
@@ -83,12 +83,15 @@ AS
     INSERT INTO [dbo].[etl_log] (ETL_ID,Task,Message)
     VALUES (@ETL_ID, @Task, @Message)
 
+GO
 
 CREATE PROCEDURE [dbo].[sp_etl_ImportSources] 
     @ProcedureName varchar(200) = "sp_etl_logging"
 AS
 
     BEGIN TRY
+
+        DECLARE @name varchar(max);
 
         DECLARE db_cursor CURSOR FOR 
         SELECT [Schema], [TableName], [SourceFile], [Delimiter], [FirstRow], [Terminator] 
@@ -100,7 +103,7 @@ AS
 
         WHILE @@FETCH_STATUS = 0  
         BEGIN  
-            BULK INSERT 
+            --Complete string here
 
             FETCH NEXT FROM db_cursor INTO @name 
         END 
@@ -113,40 +116,40 @@ AS
 
     BEGIN CATCH
         DECLARE @ErrorMessage VARCHAR(MAX)
-        SET @ErrorMessage = @ProcedureName + "-" + ERROR_MESSAGE()
+        SET @ErrorMessage = @ProcedureName + '-' + ERROR_MESSAGE()
 
-        RAISERROR (@ErrorMessage);
+        RAISERROR (@ErrorMessage, 1, 1);
     END CATCH
 
-
+GO
 
 CREATE PROCEDURE [dbo].[sp_etl_SeedImportData] 
-    @ProcedureName varchar(200) = "sp_etl_logging"
+    @ProcedureName varchar(200) = 'sp_etl_logging'
 AS
 
     BEGIN TRY
 
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
 
 
 
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
-    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
+    INSERT INTO [dbo].[SourcesImport] VALUES (1, 'dbo', 'IMPORTSOURCE_1', 'SOURCEFILE_1', 'Flat', '|', '2', 'CRLF', 'T')
 
 
 
@@ -154,7 +157,7 @@ AS
 
     BEGIN CATCH
         DECLARE @ErrorMessage VARCHAR(MAX)
-        SET @ErrorMessage = @ProcedureName + "-" + ERROR_MESSAGE()
+            SET @ErrorMessage = @ProcedureName + '-' + ERROR_MESSAGE()
 
-        RAISERROR (@ErrorMessage);
+        RAISERROR (@ErrorMessage, 1, 1);
     END CATCH
